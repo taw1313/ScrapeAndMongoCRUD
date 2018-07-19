@@ -11,7 +11,6 @@ module.exports = (app) => {
           $('.story-list').each( (i, element) => {
       
             let li = $(element).find('li');
-                console.log( li.length );
                 li.each( (j, e) => {
                     let result = {};
 
@@ -27,7 +26,11 @@ module.exports = (app) => {
                                     // console.log(dbArticle);
                                   })
                                   .catch( (err) => {
-                                    return res.json(err);
+                                    //
+                                    // ignore duplicate errors
+                                    //   ToDo: send error back to client return res.json(err);
+                                    //
+                                    if ( err.code != 11000 ) console.log( err );
                                   });
                     }
                 });
@@ -51,10 +54,14 @@ module.exports = (app) => {
                       }
                       db.Article.create( result )
                                 .then( (dbArticle) => {
-                                  console.log(dbArticle);
+                                  // console.log(dbArticle);
                                 })
                                 .catch( (err) => {
-                                  return res.json(err);
+                                  //
+                                  // ignore duplicate errors
+                                  //   ToDo: send error back to client return res.json(err);
+                                  //
+                                  if ( err.code != 11000 ) console.log( err );
                                 });
                   }
               }
@@ -64,20 +71,25 @@ module.exports = (app) => {
         });
     });
 
-    app.get('/countLinks', (req,res) => {
+    app.get('/', (req,res) => {
       db.Article.aggregate( 
                  [
                   { $project: {_id: 1, headline: 1, link: 1} },
                   { $group: {_id: '$link', 
                              headlines: {$addToSet: "$headline"},
-                             total_found: {$sum: 1}} },
-                  { $sort: {total_found : -1} }
+                             totalFound: {$sum: 1}} },
+                  { $sort: {createdDate : -1} }
                  ], (error, results) => {
                      if (error) {
                          console.log( error );
                      }
                      else {
-                         res.json(results);
+                         // pre-handlebars res.json(results);
+                         let articlesObject = { 
+                             articlesCount: results.length,
+                             articles: results 
+                         };
+                         res.render('index', articlesObject);
                      }
 
                  });

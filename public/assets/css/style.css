@@ -1,0 +1,44 @@
+#header {
+    height: 100px;
+    background-image: url('../images/heading.png');
+    background-repeat: no-repeat;
+    background-position: 70% 30%;
+    text-align: center;
+}
+
+.btn {
+    position: absolute;
+    right: 0; 
+    margin: 20px;
+    opacity: 1.0;
+}
+
+#totalCnt {
+    margin: 20px;
+    opacity: 1.0;
+}
+
+#tableHeader {
+    width: 98%
+}
+
+#tableData {
+    position: relative;
+    height: 600px;
+}
+
+.numField {
+    width: 10%;
+}
+
+.headLineField {
+    width: 70%;
+}
+
+.numNotesField {
+    width: 10%;
+}
+
+.delField {
+    width: 10%;
+}

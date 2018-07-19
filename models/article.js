@@ -13,6 +13,12 @@ let ArticleSchema = new Schema({
   },
   link: {
     type: String,
+    required: true,
+    unique: true
+  },
+  createdDate: {
+    type: Date,
+    default: Date.now,
     required: true
   },
   note: {

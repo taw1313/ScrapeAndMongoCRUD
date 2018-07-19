@@ -1,0 +1,56 @@
+<div class='container'>
+    <div class='col-md-12 row' id='header'>
+        <h3 id='totalCnt'> Total Articles found: {{articlesCount}} </h3>
+        <button type='button' class='btn btn-primary' id='scrapeBtn'> Scrape </button>
+    </div>
+    <div class='row'>
+        <div class='table-responsive' id='tableHeader'>
+            <table class='table table-hover'>
+                <thead>
+                    <tr>
+                        <th class='numField'>#</th>
+                        <th class='headLineField'>Headline</th>
+                        <th class='numNotesField'># of notes</th>
+                        <th class='delField'>delete</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+        <div class='table-responsive' id='tableData'>
+            <table class='table table-hover'>
+                <tbody id='articlesTable'>
+                    {{#each articles}}
+                        <tr>
+                            <td class='numField'> {{@index}} </td>
+                            <td class='headLineField'> {{headlines}} </td>
+                            <td class='numNotesField'> </td>
+                            <td class='fas fa-trash-alt delField'> </td>
+                        </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<!--
+                <div class='articlesArea'> 
+                    <h3> Total Articles found: {{articlesCount}} </h3>
+                    <ul>
+                        {{#each articles}}
+                            <li>
+                                <p> Number of Headlines: {{totalFound}} </p>
+                                <ul>
+                                    {{#each headlines as |headline|}}
+                                        <li>
+                                            <p> {{headline}} </p>
+                                        </li>
+                                    {{/each}}
+                                    <li>
+                                        <a hfref={{_id}}>{{_id}}</a>
+                                    </li>
+                                </ul>
+                            </li>
+                        {{/each}}
+                    </ul>
+                </div>
+-->

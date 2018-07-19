@@ -17,6 +17,11 @@ app.use(logger('dev'));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
+// Set Handlebars.
+let exphbs = require("express-handlebars");
+app.engine("handlebars", exphbs({ defaultLayout: "main" }));
+app.set("view engine", "handlebars");
+
 require('./routes/api-routes.js')(app);
 
 // 
