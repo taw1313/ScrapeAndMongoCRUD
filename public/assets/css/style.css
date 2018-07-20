@@ -32,13 +32,16 @@
 }
 
 .headLineField {
+    cursor: pointer;
     width: 70%;
 }
 
 .numNotesField {
+    cursor: pointer;
     width: 10%;
 }
 
 .delField {
+    cursor: pointer;
     width: 10%;
 }

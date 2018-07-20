@@ -21,10 +21,10 @@ let ArticleSchema = new Schema({
     default: Date.now,
     required: true
   },
-  note: {
+  notes: [{
     type: Schema.Types.ObjectId,
     ref: 'note'
-  }
+  }]
 });
 
 let Article = mongoose.model('article', ArticleSchema);
