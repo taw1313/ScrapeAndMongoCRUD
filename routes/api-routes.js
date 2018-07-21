@@ -12,7 +12,7 @@ const dbReadHeadlineData = (res) => {
         },
         { $sort: {createdDate : -1} } ], 
         (error, results) => {
-            console.log(results);
+            // console.log(results);
         if (error) {
             console.log( error );
         }
@@ -44,11 +44,6 @@ const dbCreateArticle = ( headline, link, element ) => {
         db.Article.create( result )
                   .then( (dbArticle) => {
                       // console.log(dbArticle);
-                      let note = {
-                          title: `Test ${i}`,
-                          body: `Body ${dbArticle._id}`
-                      };
-                      dbCreateNote( dbArticle._id, note );
                   })
                   .catch( (err) => {
                       //
@@ -68,7 +63,7 @@ const dbCreateNote = ( articleID, note ) => {
               {new: true} );
       })
       .then( (dbArticle) => {
-          console.log(dbArticle);
+          // console.log(dbArticle);
       })
       .catch( (err) => {
           // TODO: look at error handling
@@ -91,14 +86,13 @@ module.exports = (app) => {
     //  Get all notes for an article
     //---------------------------------------------------------------------------------------------
     app.get('/api/readNotes/:id', (req,res) => {
-        console.log ( `In readNotes route ${req.params.id}` );
         db.Article.findOne({ _id: req.params.id })
                   .populate("notes")
-                  .then(function(dbArticle) {
-                      console.log(dbArticle);
+                  .then( (dbArticle) => {
+                      // console.log(dbArticle);
                       res.json(dbArticle);
                   })
-                  .catch(function(err) {
+                  .catch( (err) => {
                   res.json(err);
         });
     });
@@ -107,20 +101,75 @@ module.exports = (app) => {
     //  Delete an article from the db
     //---------------------------------------------------------------------------------------------
     app.delete('/api/removeArticle/:id', (req,res) => {
-        db.Article.remove( {_id: req.params.id } )
+        let aID = req.params.id;
+        //
+        // first find all child notes and remove them
+        //
+        db.Article.findOne({ _id: aID })
+                  .then( (dbArticle) => {
+                      for (i=0; i<dbArticle.notes.length; i++) {
+                          db.Note.remove( {_id: dbArticle.notes[i]} )
+                          .then( response => {
+                           //   console.log( response );
+                          })
+                      }
+                      //
+                      // then remove the article
+                      //
+                      db.Article.remove( {_id: aID } )
+                          .then( response => {
+                              res.send(response);
+                          })
+                  })
+                  .catch( err => {
+                      res.send(err);
+                  });
+    });
+
+    //---------------------------------------------------------------------------------------------
+    //  Delete a note from the db
+    //---------------------------------------------------------------------------------------------
+    app.delete('/api/removeNote', (req,res) => {
+        let aID = req.body.articleID;
+        let nID = req.body.noteID;
+
+        db.Note.remove( {_id: nID } )
             .then( response => {
-                res.send(response);
+                //---------------------------------------------------------------------------------------------
+                //  remove the note from the articles array of notes
+                //---------------------------------------------------------------------------------------------
+                db.Article.findOne({ _id: aID })
+                          .then( (dbArticle) => {
+                              let index = dbArticle.notes.indexOf(nID);
+                              if (index > -1) {
+                                  dbArticle.notes.splice(index, 1);
+                              }
+                              db.Article.update({_id: aID}, dbArticle)
+                              .then( (aresponse) => {
+                                  res.send(aresponse)
+                              });
+                           });
             })
             .catch( err => {
                 res.send(err);
             });
     });
 
+    app.post('/api/addNote', (req, res) => {
+        let articleID = req.body.aID;
+        let note = {
+            title: req.body.title,
+            body: req.body.body
+        };
+        dbCreateNote( articleID, note );
+        res.send('added Note');
+    });
+
     //---------------------------------------------------------------------------------------------
     //  Scrape web site and store headlines in db
     //---------------------------------------------------------------------------------------------
     app.get('/scrape', (req, res) => {
-        console.log(`DEBUG - in scrape route`);
+        // console.log(`DEBUG - in scrape route`);
         axios.get('https://www.washingtonpost.com').then( (response) => {
             let $ = cheerio.load(response.data);
             //
