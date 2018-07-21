@@ -9,6 +9,8 @@ let db = require('./models');
 const MONGODB_URI = process.env.MONGODB_URI;
 const PORT = process.env.PORT;
 
+console.log( MONGODB_URI );
+
 //
 // Initialize Express
 //
